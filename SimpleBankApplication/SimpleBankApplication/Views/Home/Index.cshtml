@@ -1,0 +1,72 @@
+﻿@model SimpleBankApplication.Models.LoginDetails
+
+@{
+    ViewBag.Title = "Login";
+}
+
+@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+{
+    @Html.ValidationSummary(true)
+
+    <div id="Wrapper">
+
+        <div class="float-left width50">
+            <div id="LoginDiv">
+                <div class="Title">Login </div>
+                <table id="Login_Table" style="width: 90%; margin: auto; margin-top: 30px;">
+                    <tbody>                      
+                        <tr>
+                            <td>@Html.LabelFor(model => model.UserName)</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.TextBoxFor(model => model.UserName)
+                                @Html.ValidationMessageFor(model => model.UserName)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(model => model.Password)</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.TextBoxFor(model => model.Password, new { @type = "Password" })
+                                @Html.ValidationMessageFor(model => model.Password)</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.ValidationMessage("InvalidMessage")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p class="float-right">
+                                    <input type="submit" value="Login" class="but" />
+                                </p>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+        <div class="float-right">
+            <div class="LoginDiv" style=" margin:0 20px 20px;">  
+                <div class="Title">BitMinistry </div>             
+                <table id="image_Table" style="width: 90%; margin: auto; margin-top: 30px;">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <img src="~/Images/index123.jpg" style=" margin-left:15px; width:370px; height:200px;"  />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

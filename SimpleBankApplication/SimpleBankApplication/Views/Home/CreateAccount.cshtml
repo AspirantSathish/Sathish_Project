@@ -1,0 +1,148 @@
+﻿@model SimpleBankApplication.Models.BankAccount
+
+@{
+    ViewBag.Title = "Create Account";
+}
+
+@using (Html.BeginForm("CreateAccount", "Home", FormMethod.Post))
+{
+    @Html.ValidationSummary(true)
+    <div id="ErrorDialog" class="ErrorDialog">
+        <p>Display Error Message Here....</p>
+    </div>
+    if (ViewBag.Success != null)
+    {
+    <div id="SuccessDialog" class="ErrorDialog">
+        <p>@ViewBag.Success</p>
+        <br />
+        <p>@ViewBag.Update</p>        
+    </div>
+    }
+    <div class="DisplayPanel">
+        <div class="Title">Create Account</div>
+        <table id="CreateAccount_Info" style="width: 90%; margin: auto; margin-top: 30px;">
+            <tbody>
+                
+                <tr>
+                    <td>@Html.LabelFor(model => model.UserName)<span class="Required_Sym">*</span></td>
+                    <td>@Html.LabelFor(model => model.AcNumber)</td>
+                </tr>
+                <tr>
+                    <td>@if (Model.UserName == null)
+                        {
+                        @Html.TextBoxFor(model => model.UserName, new { @id = "txt_UserName", @maxlength = "50" })
+                        }
+                        else
+                        {
+                        @Html.DisplayFor(model => model.UserName, new { @id = "Display_UserName" })
+                        @Html.HiddenFor(model => model.UserName)
+                        }
+                    </td>
+                    <td>@if (Model.AcNumber != 0)
+                        {
+                        @Html.DisplayFor(model => model.AcNumber)
+                        @Html.HiddenFor(model => model.AcNumber)
+                        }
+                        else
+                        {
+                        <label style=" font-size:10px;">Auto Assigned</label>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>@Html.LabelFor(model => model.Name)<span class="Required_Sym">*</span></td>
+                    <td>@Html.LabelFor(model => model.AccountType)<span class="Required_Sym">*</span></td>
+                </tr>
+                <tr>
+                    <td>@Html.TextBoxFor(model => model.Name, new { @maxlength="100"})</td>
+                    <td>@Html.DropDownListFor(model => model.AccountType, new List<SelectListItem> { new SelectListItem { Text = "Savings Account", Value = "1" }, new SelectListItem { Text = "Current Account", Value = "2" } }, "Choose Acount Type")</td>
+                </tr>
+                <tr>
+                    <td>@Html.LabelFor(model => model.Address1)</td>
+                    <td>@Html.LabelFor(model => model.Address2)</td>
+                </tr>
+
+                <tr>
+                    <td>@Html.TextBoxFor(model => model.Address1, new { @maxlength="100"})</td>
+                    <td>@Html.TextBoxFor(model => model.Address2, new { @maxlength="100"})</td>
+                </tr>
+                <tr>
+                    <td>@Html.LabelFor(model => model.Mobile)<span class="Required_Sym">*</span></td>
+                    <td>@Html.LabelFor(model => model.Email)<span class="Required_Sym">*</span></td>
+                </tr>
+
+                <tr>
+                    <td>@Html.TextBoxFor(model => model.Mobile, new {@id="txt_MobileNo", @maxlength = "10" })</td>
+                    <td>@Html.TextBoxFor(model => model.Email, new { @maxlength="200"})</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        @Html.ValidationMessageFor(model => model.Email)
+                        @Html.ValidationMessage("InvalidMessage")
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p class="float-right">
+                            @Html.ActionLink("Bank Account List", "BankAccountList")
+                            <input type="submit" value="Create Account" id="but_CreateAccount"  class="but" />
+                            <input type="submit" value="Update Account" id="but_UpdateAccount"  class="displaynone but" />
+                            <input type="reset" value="Clear" id="but_clear" class="but" />
+                        </p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+          
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("input").attr("autocomplete", "off");
+            $("#ErrorDialog").dialog({
+                autoOpen: false,
+                buttons: {
+                    OK: function () {
+                        $(this).dialog('close');
+                    }
+                },
+                title: "Message",
+                modal: true,
+                resizable: false,
+                width: 600,
+                height: 250
+            });
+            var MobileNo = $("#txt_MobileNo").val();
+            if (MobileNo == "0") {
+                $("#txt_MobileNo").val("");
+            }
+            $("#SuccessDialog").dialog({
+                autoOpen: true,
+                buttons: {
+                    OK: function () {
+                        $(this).dialog('close');
+                    }
+                },
+                title: "Message",
+                modal: true,
+                resizable: false,
+                width: 600,
+                height: 250
+            });
+            //$("#ErrorDialog").dialog('open');
+            if ($("#txt_UserName").val() != "") {
+                $("#but_UpdateAccount").removeClass("displaynone");
+                $("#but_CreateAccount").addClass("displaynone")
+            }
+            $("#txt_MobileNo").bind("keypress", function (e) {
+                var specialkey = new Array();
+                specialkey.push(8);
+                var keyCode = e.which ? e.which : e.keyCode;
+                var ret = ((keyCode >= 48 && keyCode <= 57) || specialkey.indexOf(keyCode) != -1);
+                return ret;
+            });
+        });
+    </script>
+}

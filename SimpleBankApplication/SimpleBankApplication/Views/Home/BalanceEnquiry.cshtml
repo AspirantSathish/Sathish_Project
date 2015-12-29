@@ -1,0 +1,79 @@
+﻿@{
+    ViewBag.Title = "Balance Enquiry";
+}
+
+@using (Html.BeginForm("BalanceEnquiry", "Home", FormMethod.Get))
+{
+    <div class="DisplayPanel">
+        <div class="Title">Balance Equiry</div>
+        <table id="CreateAccount_Info" style="width: 90%; margin: auto; margin-top: 10px;">
+            <tbody>
+                <tr>
+                    <td>User Name</td>
+                    <td>@Html.TextBox("UserName")  <label id="Lbl_load" class="LoadingMessage"></label></td>
+                    <td>
+                        <input type="submit" id="but_GetStatement" value="Submit" class="but" /></td>
+                </tr>
+                <tr>
+                    <td colspan="3">@Html.ValidationMessage("InvalidMessage")</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        @if (ViewBag.UserName != null)
+                        {
+                            <table id="BalanceInfo" class="TGrid">
+                                <tbody>
+                                    <tr>
+                                        <td>Account Holder Name [A/c Number] </td>
+                                        <td>@ViewBag.UserName [@ViewBag.AccountNumber]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Current Balance</td>
+                                        <td>@ViewBag.CurrentAmount</td>
+                                    </tr>
+                                </tbody>
+                            </table>                           
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        var transmode;
+        $(document).ready(function () {
+
+            $("#UserName").autocomplete({
+                search: function (event, ui) {
+                    $("#Lbl_load").text("Loading...");
+                },
+                source: function (request, response) {
+                    var customer = new Array();
+                    $.ajax({
+                        type: "POST",
+                        url: "@(Url.Action("Autocomplete", "Home"))",
+                        data: { "term": request.term },
+                        success: function (data) {
+                            $("#Lbl_load").text("");
+                            response($.map(data, function (item) {
+                                return { label: item.UserName, value: item.AcNumber };
+
+                            }))
+                        }
+                    });
+
+                },
+                select: function (event, ui) {
+                    //fill selected customer details on form               
+                    $("#UserName").val(ui.item.label);
+                    return false;
+                }
+            });
+
+        });
+
+    </script>
+}

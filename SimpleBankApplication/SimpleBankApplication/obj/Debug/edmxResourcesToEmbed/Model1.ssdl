@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SimpleBankModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="SimpleBankModelStoreContainer">
+    <EntitySet Name="BankAccount" EntityType="SimpleBankModel.Store.BankAccount" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TransactionDetails" EntityType="SimpleBankModel.Store.TransactionDetails" store:Type="Tables" Schema="dbo" />
+  </EntityContainer>
+  <EntityType Name="BankAccount">
+    <Key>
+      <PropertyRef Name="UserName" />
+    </Key>
+    <Property Name="UserName" Type="nvarchar" Nullable="false" MaxLength="128" />
+    <Property Name="AcNumber" Type="decimal" Nullable="false" Scale="2" />
+    <Property Name="Name" Type="nvarchar(max)" />
+    <Property Name="Address1" Type="nvarchar(max)" />
+    <Property Name="Address2" Type="nvarchar(max)" />
+    <Property Name="Mobile" Type="decimal" Nullable="false" Scale="2" />
+    <Property Name="Email" Type="nvarchar(max)" />
+    <Property Name="CreatedDateTime" Type="datetime" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TransactionDetails">
+    <Key>
+      <PropertyRef Name="TransactionId" />
+    </Key>
+    <Property Name="TransactionId" Type="decimal" Nullable="false" Scale="2" />
+    <Property Name="UserName" Type="nvarchar(max)" />
+    <Property Name="TransactionMode" Type="decimal" Nullable="false" Scale="2" />
+    <Property Name="Amount" Type="decimal" Nullable="false" Scale="2" />
+    <Property Name="DepositorName" Type="nvarchar(max)" />
+    <Property Name="TransactionDateTime" Type="datetime" Nullable="false" />
+    <Property Name="TransferFromUserName" Type="nvarchar(max)" />
+    <Property Name="TransferToUserName" Type="nvarchar(max)" />
+  </EntityType>
+</Schema>

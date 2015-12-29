@@ -1,0 +1,15 @@
+﻿@if (Session["UserName"] != null)
+{
+    <nav>
+        <ul id="menu">
+            <li>@Html.ActionLink("Create Account", "CreateAccount", "Home")</li>            
+            <li>@Html.ActionLink("Operations", "Operations", "Home")</li>
+            <li>@Html.ActionLink("Balance Enquiry", "BalanceEnquiry", "Home")</li>
+            <li>@Html.ActionLink("Statement", "Statement", "Home")</li>
+            <li>@Html.ActionLink("Logout", "Index", "Home")</li>
+        </ul>
+    </nav>
+}else{
+    <div>
+        <img src="~/Images/index.jpg" /></div>
+}

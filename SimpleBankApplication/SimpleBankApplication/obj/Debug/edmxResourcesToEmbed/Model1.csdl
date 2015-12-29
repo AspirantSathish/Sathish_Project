@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SimpleBankModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="SimpleBankEntities" p1:LazyLoadingEnabled="true">
+    <EntitySet Name="BankAccounts" EntityType="SimpleBankModel.BankAccount" />
+    <EntitySet Name="TransactionDetails" EntityType="SimpleBankModel.TransactionDetail" />
+  </EntityContainer>
+  <EntityType Name="BankAccount">
+    <Key>
+      <PropertyRef Name="UserName" />
+    </Key>
+    <Property Name="UserName" Type="String" Nullable="false" MaxLength="128" Unicode="true" FixedLength="false" />
+    <Property Name="AcNumber" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+    <Property Name="Name" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <Property Name="Address1" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <Property Name="Address2" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <Property Name="Mobile" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+    <Property Name="Email" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <Property Name="CreatedDateTime" Type="DateTime" Nullable="false" Precision="3" />
+  </EntityType>
+  <EntityType Name="TransactionDetail">
+    <Key>
+      <PropertyRef Name="TransactionId" />
+    </Key>
+    <Property Name="TransactionId" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+    <Property Name="UserName" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <Property Name="TransactionMode" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+    <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+    <Property Name="DepositorName" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <Property Name="TransactionDateTime" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="TransferFromUserName" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <Property Name="TransferToUserName" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+  </EntityType>
+</Schema>

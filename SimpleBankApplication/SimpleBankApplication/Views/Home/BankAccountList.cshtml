@@ -1,0 +1,26 @@
+﻿@model IEnumerable<SimpleBankApplication.Models.BankAccount>
+
+@{
+    ViewBag.Title = "BankAccountList";
+}
+
+<div class="DisplayPanel">
+    <div class="Title">Bank Account Holder List</div>
+    <table id="CreateAccount_Info" style="width: 100%; margin: auto; margin-top: 10px;">
+        <tbody>
+            <tr>
+                <td colspan="2">
+                    @{ 
+                        var BankAccountGrid = new WebGrid(source: Model, canPage: true, rowsPerPage: 10, defaultSort: "UserName");
+                        BankAccountGrid.Pager(WebGridPagerModes.NextPrevious);
+                        @BankAccountGrid.GetHtml(tableStyle: "TGrid", headerStyle: "HGrid", htmlAttributes: new { id = "GridBankAccount" },
+    columns: BankAccountGrid.Columns(BankAccountGrid.Column("UserName", "User Name"),
+    BankAccountGrid.Column("AcNumber", "A/C Number"), BankAccountGrid.Column("Name"),
+    BankAccountGrid.Column("Mobile"), BankAccountGrid.Column("Email"), BankAccountGrid.Column("", header: "Edit", format: @<text>@Html.ActionLink("Edit", "CreateAccount", "Home", new { UserName = item.UserName }, new { target = "_blank" })</text>)));
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+

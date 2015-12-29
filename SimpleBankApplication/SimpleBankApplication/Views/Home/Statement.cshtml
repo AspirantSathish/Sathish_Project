@@ -1,0 +1,99 @@
+﻿@model IEnumerable<SimpleBankApplication.Models.BankStatement>
+
+@{
+    ViewBag.Title = "Statement";
+}
+
+@using (Html.BeginForm("Statement", "Home", FormMethod.Get))
+{
+    <div class="DisplayPanel">
+        <div class="Title">Bank Statement Based on UserName</div>
+        <table id="CreateAccount_Info" style="width: 90%; margin: auto; margin-top: 10px;">
+            <tbody>
+                <tr>
+                    <td>User Name</td>
+                    <td>@Html.TextBox("UserName") <label id="Lbl_load" class="LoadingMessage"></label></td>
+                    <td>
+                        <input type="submit" id="but_GetStatement" value="Submit" class="but" /></td>
+                </tr>
+                <tr>
+                    <td colspan="3">@Html.ValidationMessage("InvalidMessage")</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+
+                        @if (Model != null)
+                        {
+                            <div id="PrintStatement">
+                                @if (ViewBag.UserName != null)
+                                {
+                                    <table id="BalanceInfo" class="TGrid">
+                                        <tbody>
+                                            <tr>
+                                                <td>Account Holder Name [A/c Number] </td>
+                                                <td>@ViewBag.UserName [@ViewBag.AccountNumber] </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Current Balance</td>
+                                                <td>@ViewBag.CurrentAmount</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>                           
+                                }
+                                @{
+                                var Settlement = new WebGrid(source: Model, canPage: true, rowsPerPage: 10, defaultSort: "DateTime", canSort: false);
+                                Settlement.Pager(WebGridPagerModes.NextPrevious);
+                                    @Settlement.GetHtml(tableStyle: "TGrid", headerStyle: "HGrid", htmlAttributes: new { id = "BankStatement" },
+    columns: Settlement.Columns(Settlement.Column("DateTime", "Date & Time"),
+    Settlement.Column("Description", "Descriptions", null, "textalignleft", false), Settlement.Column("CreditAmount", "Credit", null, "textalignright", false),
+    Settlement.Column("DebitAmount", "Debit", null, "textalignright", false)));
+                                }
+                            </div>@*
+                            <p>
+                                <input type="button" id="but_Print" value="Print Statement" onclick="window.print();" /></p>*@
+                        }
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        var transmode;
+        $(document).ready(function () {
+
+            $("#UserName").autocomplete({
+                search: function (event, ui) {
+                    $("#Lbl_load").text("Loading...");
+                },
+                source: function (request, response) {
+                    var customer = new Array();
+                    $.ajax({
+                        type: "POST",
+                        url: "@(Url.Action("Autocomplete", "Home"))",
+                        data: { "term": request.term },
+                        success: function (data) {
+                            $("#Lbl_load").text("");
+                            response($.map(data, function (item) {
+                               
+                                return { label: item.UserName, value: item.AcNumber };
+
+                            }))
+                        }
+                    });
+
+                },
+                select: function (event, ui) {
+                    //fill selected customer details on form               
+                    $("#UserName").val(ui.item.label);
+                    return false;
+                }
+            });
+
+        });
+
+    </script>
+}

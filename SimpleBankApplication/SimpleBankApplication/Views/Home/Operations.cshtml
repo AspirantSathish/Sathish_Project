@@ -1,0 +1,227 @@
+﻿@model SimpleBankApplication.Models.TransactionDetails
+@{
+    ViewBag.Title = "Operations";
+}
+
+
+@using (Html.BeginForm("Operations", "Home", FormMethod.Post))
+{
+    @Html.ValidationSummary(true)
+        <div id="ErrorDialog" class="ErrorDialog">
+        <p id="lbl_ErrorMessage" class="message-error"></p>
+    </div>
+    if (ViewBag.Success != null)
+    {
+    <div id="SuccessDialog" class="ErrorDialog">
+        <p>@ViewBag.Success</p>
+        <br />
+        @if (ViewBag.Update != null)
+        {
+            <p> @ViewBag.Update</p>
+        }        
+    </div>
+    }
+    <div class="DisplayPanel">
+        <div class="Title">Operations</div>
+        <table id="CreateAccount_Info" style="width: 90%; margin: auto; margin-top: 30px;">
+            <tbody>
+                
+                <tr>
+                    <td>@Html.LabelFor(model => model.UserName)<span class="Required_Sym">*</span></td>
+                    <td>@Html.Label("Account Number")</td>
+                </tr>
+                <tr>
+                    <td>@Html.TextBoxFor(model => model.UserName, new { @id="txtUserName_AutoComplete", @maxlength = "50"})  <label id="Lbl_load" class="LoadingMessage"></label></td>
+                    <td>@Html.Label(" ", new { @id = "Acnumber" })</td>
+                </tr>
+                <tr>
+                    <td>@Html.LabelFor(model => model.TransactionMode)<span class="Required_Sym">*</span></td>
+                    <td>@Html.LabelFor(model => model.TransactionDateTime)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DropDownListFor(model => model.TransactionMode, new SelectList(ViewBag.TransModeList, "TransModeId", "TransModeName"), "Choose Transaction Mode", new { @id = "drop_transmode" })</td>
+                    <td>@Html.DisplayFor(model => model.TransactionDateTime)</td>
+                </tr>
+                <tr>
+                    <td>@Html.LabelFor(model => model.Amount)</td>
+                    <td>@Html.LabelFor(model => model.DepositorName, new { @id = "txt_DisplayTransMode" })</td>
+                </tr>
+
+                <tr>
+                    <td>@Html.TextBoxFor(model => model.Amount, new { @id = "txt_Amount", @maxlength = "12" })</td> 
+                    <td>@Html.TextBoxFor(model => model.DepositorName, new { @id = "txt_DepositorName", @class = "displaynone", @maxlength = "100" })
+                        @Html.TextBoxFor(model => model.TransferToUserName, new { @id = "txt_transUserName", @class = "displaynone", @maxlength = "50" })  <label id="Lbl_load1" class="LoadingMessage"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        @Html.ValidationMessage("InvalidMessage")
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p class="float-right">
+                            <input type="submit" value="Deposit Amount" name="Submit" id="but_submitOperations" class="but" />
+                            <input type="reset" value="Clear" id="but_Clear" class="but" />
+                        </p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+          
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    var transmode;
+    $(document).ready(function () {
+        $("input").attr("autocomplete", "off");
+        $("#txt_Amount").val("");
+        transmode = $("#drop_transmode option:selected").val();
+        TransferModeChanged();
+        if (transmode != "") {
+            $("#txt_DisplayTransMode").text("");
+            $("#txt_Amount").val("");
+        }
+        $("#ErrorDialog").dialog({
+            autoOpen: false,
+            buttons: {
+                OK: function () {
+                    $(this).dialog('close');
+                }
+            },
+            title: "Message",
+            modal: true,
+            resizable: false,
+            width: 600,
+            height: 250
+        });
+
+        $("#SuccessDialog").dialog({
+            autoOpen: true,
+            buttons: {
+                OK: function () {
+                    $(this).dialog('close');
+                }
+            },
+            title: "Message",
+            modal: true,
+            resizable: false,
+            width: 600,
+            height: 250
+        });
+        $("#txtUserName_AutoComplete").autocomplete({
+            search: function (event, ui) {
+                $("#Lbl_load").text("Loading...");
+            },
+            source: function (request, response) {
+                var customer = new Array();
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    type: "POST",
+                    url: "@(Url.Action("Autocomplete", "Home"))",
+                    data: { "term": request.term },
+                    success: function (data) {
+                        $("#Lbl_load").text("");
+                        response($.map(data, function (item) {
+                            return { label: item.UserName, value: item.AcNumber };
+
+                        }))
+                    }
+                });
+
+            },
+            select: function (event, ui) {
+                //fill selected customer details on form
+                $("#Acnumber").text(ui.item.value);
+                $("#txtUserName_AutoComplete").val(ui.item.label);
+                return false;
+            }
+        });
+        $("#txt_transUserName").autocomplete({
+            search: function (event, ui) {
+                $("#Lbl_load1").text("Loading...");
+            },
+            source: function (request, response) {
+                var customer = new Array();
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    type: "POST",
+                    url: "@(Url.Action("Autocomplete", "Home"))",
+                    data: { "term": request.term },
+                    success: function (data) {
+                        $("#Lbl_load1").text("");
+                        response($.map(data, function (item) {
+                            return { label: item.UserName, value: item.AcNumber };
+
+                        }))
+                    }
+                });
+            },
+            select: function (event, ui) {
+                $("#txt_transUserName").val(ui.item.label);
+                return false;
+            }
+        });
+    });
+    $(function () {
+        $("#drop_transmode").change(function () {
+            transmode = $(this).val();
+            $("#txt_DepositorName").addClass("displaynone");
+            $("#txt_transUserName").addClass("displaynone");
+            $("#txt_DepositorName").val("");
+            $("#txt_transUserName").val("");
+            TransferModeChanged();
+        });
+        $("#txt_Amount").bind("keypress",function (e) {
+            var specialkey= new Array();
+            specialkey.push(8);
+            var keyCode = e.which ? e.which : e.keyCode;
+            var ret = ((keyCode >= 48 && keyCode <= 57) || specialkey.indexOf(keyCode) != -1);
+            return ret;                
+        });
+        //$("#txtUserName_AutoComplete").change(function () { alert($(this).val());});
+        $("#but_submitOperations").click(function () {
+            transmode = $("#drop_transmode option:selected").val();
+            if (transmode == "3") {
+                if ($("#txt_transUserName").val() == "") {
+                    $("#lbl_ErrorMessage").text("Enter the Transfer User Name");
+                    $("#txt_transUserName").focus();
+                    $("#ErrorDialog").dialog('open');
+                    return false;
+                }
+            } else if (transmode == "") {
+                $("#lbl_ErrorMessage").text("Choose the Transaction Mode");
+                $("#drop_transmode").focus();
+                $("#ErrorDialog").dialog('open');
+                return false;
+            }           
+            return true;
+
+        });
+    });
+    function TransferModeChanged() {
+        if (transmode == "1") {
+            transmode = "Depositor Name";
+            $("#txt_DepositorName").removeClass("displaynone");
+            $("#but_submitOperations").val("Deposit Amount");
+
+        } else if (transmode == "2") {
+            transmode = "Withdrawer Name";
+            $("#txt_DepositorName").removeClass("displaynone");
+            $("#but_submitOperations").val("Withdraw Amount");
+        } else if (transmode == "3") {
+            transmode = "Transfer User Name";
+            $("#txt_transUserName").removeClass("displaynone");
+            $("#but_submitOperations").val("Transfer Amount");
+        } else {
+            transmode = "";
+            $("#but_submitOperations").val("Deposit Amount");
+        }
+        $("#txt_DisplayTransMode").text(transmode);
+    }
+</script>
+}
